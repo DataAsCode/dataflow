@@ -27,7 +27,6 @@ class HackyScheduler:
             job = self.async_queue.get()
             job.result()
 
-
     def async_flow(self, cls):
         job = self.pool.submit(cls.hacky_run, (self.connections,))
         self.async_queue.put(job)
@@ -47,6 +46,7 @@ class HackyScheduler:
     def schedule(self, cls):
         schd = self.cache.get_schedule(cls)
         schd = schd if schd is not None else self.default_schedule
+
         schd.do(partial(self.async_flow, cls=cls))
 
     @staticmethod

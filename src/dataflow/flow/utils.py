@@ -5,7 +5,7 @@ from dataflow.cache import Cache
 import functools
 
 
-def register_flow(cls=None, connections: List[str] = [], schedule=None):
+def register_flow(cls, flow_group: str, group_rank=-1, flow_parent=None, schedule=None):
     def _decorate(cls):
         Cache.register_flow(cls)
 
@@ -21,8 +21,4 @@ def register_flow(cls=None, connections: List[str] = [], schedule=None):
 
         return wrapped_function
 
-    if cls:
-        # Return the decorated function
-        return _decorate(cls)
-
-    return _decorate
+    return _decorate(cls)

@@ -2,7 +2,7 @@ from metaflow import step as meta_step
 import functools
 
 
-def step(func, optional_argument1=None, optional_argument2=None):
+def step(func, starting_point=False, optional_argument2=None):
     # Ensure the function is properly wrapped by the Metaflow step function before moving on
     meta_func = meta_step(func)
 
