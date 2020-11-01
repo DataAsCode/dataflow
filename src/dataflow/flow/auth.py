@@ -1,7 +1,10 @@
+# pylint: disable=no-member
+# pylint: disable=E1101
+
 from metaflow import FlowSpec, IncludeFile
 import os
-
-from pandasdb.connections import PostgresConnection, RedshiftConnection
+from functools import partial, lru_cache
+from pandasdb.sql.config import Databases
 import json
 
 CONFIG_FILE = os.path.expanduser(f"~{os.sep}.dataflow{os.sep}connections.json")
@@ -12,19 +15,10 @@ if not os.path.exists(CONFIG_FILE):
 class AuthorizedFlow(FlowSpec):
     auth_file = IncludeFile('auth_file', is_text=True, help='My input', default=CONFIG_FILE)
 
-    def __init__(self, *args, **kwargs):
-        FlowSpec.__init__(self, *args, **kwargs)
+    @lru_cache
+    def _all_connections(self):
+        return json.loads(self.auth_file)
 
     @property
     def databases(self):
-        connections = {name: self.to_db(name, info) for name, info in json.loads(self.auth_file).items()}
-        return type("Databases", (), connections)
-
-    def to_db(self, name, info):
-        if "name" not in info:
-            info["name"] = name
-
-        if info["type"] == "POSTGRES":
-            return PostgresConnection(**info)
-        else:
-            return RedshiftConnection(**info)
+        return Databases(connections=self._all_connections())
