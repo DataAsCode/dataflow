@@ -18,5 +18,10 @@ class Cache:
         Cache.flow_schedules[camel_to_snake(cls.__name__)] = schedule
 
     @staticmethod
+    def register_flow_group(group, parents, rank):
+        pass
+
+
+    @staticmethod
     def get_schedule(cls):
         return Cache.flow_schedules.get(camel_to_snake(cls.__name__))
