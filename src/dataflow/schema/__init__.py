@@ -5,4 +5,5 @@ from dataflow.schema.column import (IntegerColumn,
                                     StringColumn,
                                     BooleanColumn,
                                     JSONColumn,
-                                    DateColumn)
+                                    DateColumn,
+                                    TextColumn)

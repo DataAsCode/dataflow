@@ -17,6 +17,11 @@ class StringColumn(ColumnSchema):
         ColumnSchema.__init__(self, name, sat.String, *args, **kwargs)
 
 
+class TextColumn(ColumnSchema):
+    def __init__(self, name, *args, **kwargs):
+        ColumnSchema.__init__(self, name, sat.String(length=65535), *args, **kwargs)
+
+
 class FloatingColumn(ColumnSchema):
     def __init__(self, name, *args, **kwargs):
         ColumnSchema.__init__(self, name, sat.Float, *args, **kwargs)

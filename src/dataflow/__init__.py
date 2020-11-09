@@ -12,6 +12,5 @@ finally:
 
 
 from dataflow.flow.data_flow import DataFlow
-from dataflow.flow.utils import register_flow
+from dataflow.wrappers import register_flow
 from dataflow.steps import step
-import schedule as schedule_flow

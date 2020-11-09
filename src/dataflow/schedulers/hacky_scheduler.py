@@ -1,7 +1,6 @@
-import subprocess
 import time
 
-from dataflow.cache import Cache
+from dataflow.schedulers.dag import DAG
 import schedule
 from threading import Thread
 from queue import Queue
@@ -14,7 +13,7 @@ class HackyScheduler:
     def __init__(self, connection_info: dict, default_schedule):
         self.connections = connection_info
         self.default_schedule = default_schedule
-        self.cache = Cache()
+        self.cache = DAG()
 
         self.pool = ThreadPoolExecutor(mp.cpu_count())
 
