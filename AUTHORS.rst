@@ -2,4 +2,4 @@
 Contributors
 ============
 
-* Mikkel Vilstrup <mv@raffle.ai>
+* Mikkel Vilstrup <mikkel@vilstrup.dk>

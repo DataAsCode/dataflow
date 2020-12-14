@@ -1,6 +1,7 @@
+import inspect
 from typing import List
 
-from dataflow.schedulers.dag import DAG
+from dataflow.graph.dag import DAG
 
 from metaflow import step as meta_step
 import functools
@@ -13,8 +14,8 @@ def step(func):
     # Wrap the function in another function to enable call-time logic
     def _decorate(meta_func):
         @functools.wraps(meta_func)
-        def wrapped_function(*args, **kwargs):
-            meta_func(*args, **kwargs)
+        def wrapped_function(self, *args, **kwargs):
+            return meta_func(self, *args, **kwargs)
 
         return wrapped_function
 
@@ -26,28 +27,45 @@ def register_flow(cls=None, depends_on: List[str] = None):
     if cls is None:
         return functools.partial(register_flow, depends_on=depends_on)
 
-    def _decorate(cls):
-        DAG.register_flow(cls)
-        for name in depends_on:
-            DAG.register_dependency(cls, name)
+    DAG.add_flow(cls, depends_on, cls.__module__)
 
-        @functools.wraps(cls)
-        def wrapped_function(*args, **kwargs):
-            cls(*args, **kwargs)
+    @functools.wraps(cls)
+    def wrapped_function(*args, **kwargs):
+        obj = cls(*args, **kwargs)
 
-        return wrapped_function
+        return obj
 
-    return _decorate
+    return wrapped_function
 
-def register_output_table(cls=None):
-    if cls is None:
-        return functools.partial(register_output_table)
 
-    def _decorate(cls):
-        @functools.wraps(cls)
-        def wrapped_function(*args, **kwargs):
-            cls(*args, **kwargs)
+def register_output_table(database_ref, table_name, *columns):
+    try:
+        stack = inspect.stack()
+        class_name = stack[1][0].f_locals.get("__qualname__")
+        module = stack[1][0].f_locals.get("__module__")
+        DAG.add_table_output(class_name, [f"{database_ref}.{table_name}"], module=module)
+    except:
+        pass
 
-        return wrapped_function
+    def schema_ref(self):
+        from dataflow.schema import TableSchema
+        database = getattr(self.databases(), database_ref)
+        return TableSchema(database, table_name, *columns)
 
-    return _decorate
+    return schema_ref
+
+
+def register_input_table(database_ref, table_name):
+    try:
+        stack = inspect.stack()
+        class_name = stack[1][0].f_locals.get("__qualname__")
+        module = stack[1][0].f_locals.get("__module__")
+        DAG.add_table_input(class_name, [f"{database_ref}.{table_name}"], module)
+    except:
+        pass
+
+    def table_ref(self):
+        database = getattr(self.databases(), database_ref)()
+        return getattr(database, table_name)
+
+    return table_ref

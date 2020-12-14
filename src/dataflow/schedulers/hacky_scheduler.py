@@ -1,58 +1,62 @@
 import time
 
-from dataflow.schedulers.dag import DAG
-import schedule
-from threading import Thread
-from queue import Queue
-from concurrent.futures import ThreadPoolExecutor
-import multiprocessing as mp
-from functools import partial
+from dataflow.configuration import Configuration
+from dataflow.graph.dag import DAG
+import matplotlib.pyplot as plt
+import argparse
+from dataflow import schedule_flow, load_all_flows
+
+from dataflow.schedulers.run import DependencyThreadPool
 
 
 class HackyScheduler:
-    def __init__(self, connection_info: dict, default_schedule):
-        self.connections = connection_info
-        self.default_schedule = default_schedule
-        self.cache = DAG()
+    def __init__(self, configuration=None):
+        self.configuration = Configuration(**configuration)
+        self.setup()
+        self.parse_args()
 
-        self.pool = ThreadPoolExecutor(mp.cpu_count())
+    def setup(self):
+        load_all_flows(folder=self.configuration["folder"])
 
-        self.async_queue = Queue()
-        self.waiter = Thread(target=self.wait)
-        self.waiter.start()
+    def parse_args(self):
+        parser = argparse.ArgumentParser(description='Process some integers.')
 
-    def wait(self):
-        while True:
-            job = self.async_queue.get()
-            job.result()
+        parser.add_argument('--plot_tables', nargs="?", const=True, default=False, help='plot table graphs')
+        parser.add_argument('--plot_flows', nargs="?", const=True, default=False, help='plot flow graphs')
+        parser.add_argument('--plot', nargs="?", const=True, default=False, help='plot all graphs')
+        parser.add_argument('--run', nargs="?", const=True, default=False, help='run the whole dataflow once')
+        parser.add_argument('--serve', nargs="?", const=True, default=False,
+                            help='serve the whole dataflow according to the schedule')
+        args = parser.parse_args()
 
-    def async_flow(self, cls):
-        job = self.pool.submit(cls.hacky_run, (self.connections,))
-        self.async_queue.put(job)
-        print(f"Scheduled {cls.__name__}")
-
-    def run(self):
-        for name, cls in self.cache.data_flows.items():
-            # Run the flow right away
-            self.async_flow(cls)
-
-            # Schedule it to continue to run
-            self.schedule(cls)
-
-        # Keep serving until interrupted
-        self.serve()
-
-    def schedule(self, cls):
-        schd = self.cache.get_schedule(cls)
-        schd = schd if schd is not None else self.default_schedule
-
-        schd.do(partial(self.async_flow, cls=cls))
+        if args.run:
+            self.run()
+        if args.serve:
+            self.serve()
+        if args.plot:
+            self.plot_flows()
+            self.plot_tables()
+        elif args.plot_tables:
+            self.plot_tables()
+        elif args.plot_flows:
+            self.plot_flows()
 
     @staticmethod
-    def serve():
+    def run():
+        with DependencyThreadPool() as pool:
+            for name, dependencies in DAG.flow_execution():
+                pool.submit(name, DAG.flows[name].hacky_run, dependencies)
+
+    def serve(self):
+        self.configuration.conf["schedule"].do(self.run)
         while True:
-            try:
-                schedule.run_pending()
-                time.sleep(1)
-            except KeyboardInterrupt:
-                break
+            schedule_flow.run_pending()
+            time.sleep(1)
+
+    @staticmethod
+    def plot_flows():
+        ax = DAG.plot_flows()
+        plt.savefig('flows.png')
+
+    def plot_tables(self):
+        pass

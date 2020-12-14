@@ -3,16 +3,15 @@ from sys import getsizeof
 
 import psycopg2
 import pandas as pd
-from dataflow.wrappers import register_output_table
 from sqlalchemy import Table, MetaData, UniqueConstraint
 import numpy as np
 
 
-@register_output_table
 class TableSchema:
     metadata = MetaData()
 
-    def __init__(self, name, *columns, unique_constraints={}):
+    def __init__(self, database, name, *columns, unique_constraints={}):
+        self.database = database
         self.name = name
         self._columns = {column.name: column for column in columns}
         self._dtypes = {column.name: column.type for column in columns}
@@ -23,7 +22,8 @@ class TableSchema:
 
         self._table = Table(name, TableSchema.metadata, *columns, *constraints)
 
-    def replace(self, database, df: pd.DataFrame):
+    def replace(self, df: pd.DataFrame):
+        database = self.database()
         self._table.schema = database.schema
         self._table.drop(database.engine(), checkfirst=True)
         self._table.create(database.engine())
