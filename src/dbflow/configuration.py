@@ -1,4 +1,4 @@
-from dataflow import schedule_flow
+from dbflow import schedule_flow
 
 
 class Configuration:

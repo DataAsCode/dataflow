@@ -1,5 +1,5 @@
 import networkx as nx
-from dataflow.graph.plot import plot_graph
+from dbflow.graph.plot import plot_graph
 
 
 class DAG:

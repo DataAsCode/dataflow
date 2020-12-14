@@ -1,12 +1,12 @@
 import time
 
-from dataflow.configuration import Configuration
-from dataflow.graph.dag import DAG
+from dbflow.configuration import Configuration
+from dbflow.graph.dag import DAG
 import matplotlib.pyplot as plt
 import argparse
-from dataflow import schedule_flow, load_all_flows
+from dbflow import schedule_flow, load_all_flows
 
-from dataflow.schedulers.run import DependencyThreadPool
+from dbflow.schedulers.run import DependencyThreadPool
 
 
 class HackyScheduler:
@@ -24,9 +24,9 @@ class HackyScheduler:
         parser.add_argument('--plot_tables', nargs="?", const=True, default=False, help='plot table graphs')
         parser.add_argument('--plot_flows', nargs="?", const=True, default=False, help='plot flow graphs')
         parser.add_argument('--plot', nargs="?", const=True, default=False, help='plot all graphs')
-        parser.add_argument('--run', nargs="?", const=True, default=False, help='run the whole dataflow once')
+        parser.add_argument('--run', nargs="?", const=True, default=False, help='run the whole dbflow once')
         parser.add_argument('--serve', nargs="?", const=True, default=False,
-                            help='serve the whole dataflow according to the schedule')
+                            help='serve the whole dbflow according to the schedule')
         args = parser.parse_args()
 
         if args.run:

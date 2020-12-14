@@ -9,7 +9,7 @@ from functools import lru_cache
 from pandasdb.sql.config import Databases
 import json
 
-CONFIG_FILE = os.path.expanduser(f"~{os.sep}.dataflow{os.sep}connections.json")
+CONFIG_FILE = os.path.expanduser(f"~{os.sep}.dbflow{os.sep}connections.json")
 if not os.path.exists(CONFIG_FILE):
     CONFIG_FILE = os.path.expanduser(f"~{os.sep}.pandas_db{os.sep}connections.json")
 

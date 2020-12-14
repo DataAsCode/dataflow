@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import pytest
-from dataflow.skeleton import fib
+from dbflow.skeleton import fib
 
 __author__ = "Mikkel Vilstrup"
 __copyright__ = "Mikkel Vilstrup"

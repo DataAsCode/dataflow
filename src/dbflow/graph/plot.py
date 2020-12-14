@@ -1,7 +1,7 @@
 from collections import defaultdict
 import networkx as nx
 
-from dataflow.graph.plot_utils import plot_layers
+from dbflow.graph.plot_utils import plot_layers
 
 
 def invert_weight(graph, weight='weight'):

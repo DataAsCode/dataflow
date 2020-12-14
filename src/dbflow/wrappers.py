@@ -1,7 +1,7 @@
 import inspect
 from typing import List
 
-from dataflow.graph.dag import DAG
+from dbflow.graph.dag import DAG
 
 from metaflow import step as meta_step
 import functools
@@ -48,7 +48,7 @@ def register_output_table(database_ref, table_name, *columns):
         pass
 
     def schema_ref(self):
-        from dataflow.schema import TableSchema
+        from dbflow.schema import TableSchema
         database = getattr(self.databases(), database_ref)
         return TableSchema(database, table_name, *columns)
 

@@ -11,7 +11,7 @@ finally:
     del get_distribution, DistributionNotFound
 
 
-from dataflow.flow.data_flow import DataFlow
-from dataflow.wrappers import register_flow, step, register_output_table, register_input_table
-from dataflow.utils import load_all_flows
+from dbflow.flow.data_flow import DataFlow
+from dbflow.wrappers import register_flow, step, register_output_table, register_input_table
+from dbflow.utils import load_all_flows
 import schedule as schedule_flow
