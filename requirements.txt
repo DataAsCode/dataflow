@@ -1,9 +1,0 @@
-pandas
-matplotlib
-numpy
-networkx
-sqlalchemy
-metaflow
-schedule
-netgraph
-psycopg2
