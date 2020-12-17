@@ -48,7 +48,7 @@ class HackyScheduler:
                 pool.submit(name, DAG.flows[name].hacky_run, dependencies)
 
     def serve(self):
-        self.configuration.conf["schedule"].do(self.run)
+        self.configuration.schedule.do(self.run)
         while True:
             schedule_flow.run_pending()
             time.sleep(1)
