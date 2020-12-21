@@ -24,7 +24,7 @@ class StaticConfiguration:
 
     @property
     def schedule(self):
-        return self.conf["schedule"]
+        return Schedule(**self.conf["schedule"])
 
     @property
     def auth(self):
