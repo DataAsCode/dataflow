@@ -13,10 +13,10 @@ class StaticConfiguration:
             "folder": "flows",
             "auth": {
                 "file": [
-                    os.path.expanduser(f"~{os.sep}.dbflow{os.sep}connections.json"),
-                    os.path.expanduser(f"~{os.sep}.pandas_db{os.sep}connections.json")
+                    f"~{os.sep}.dbflow{os.sep}connections.json",
+                    f"~{os.sep}.pandas_db{os.sep}connections.json"
                 ],
-                "env": ["mf_config"]
+                "env": ["MF_CONFIG"]
             }
         }
 
@@ -32,8 +32,8 @@ class StaticConfiguration:
         for key, values in self.conf["auth"].items():
             if key == "file":
                 for value in values:
-                    if os.path.exists(value):
-                        auth_info[key] = value
+                    if os.path.exists(os.path.expanduser(value)):
+                        auth_info[key] = os.path.expanduser(value)
                         break
                 else:
                     auth_info["file"] = None
@@ -67,7 +67,7 @@ class StaticConfiguration:
             return obj
 
         with open(self.path, "w") as output:
-            json.dump(self.conf, output, default=encoder)
+            json.dump(self.conf, output, default=encoder, sort_keys=True, indent=4)
 
     def __call__(self, **kwargs):
         for item, value in kwargs.items():

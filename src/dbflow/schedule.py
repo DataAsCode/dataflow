@@ -1,3 +1,6 @@
+import time
+
+
 class Schedule:
     def __init__(self, every=None, interval=None, at=None):
         self.config = {
@@ -27,7 +30,15 @@ class Schedule:
         return sched
 
     def do(self, func):
-        return self.sched.do(func)
+        self.sched.do(func)
+        return self
+
+    @staticmethod
+    def wait():
+        import schedule
+        while True:
+            schedule.run_pending()
+            time.sleep(1)
 
     @staticmethod
     def from_json(data):
@@ -35,5 +46,3 @@ class Schedule:
 
     def __iter__(self):
         return iter(self.config)
-
-

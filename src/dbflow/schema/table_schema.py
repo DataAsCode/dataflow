@@ -31,13 +31,11 @@ class TableSchema:
         # Change all NaN values to None in to store it properly in the database
         df = df.astype(object).where(pd.notnull(df), None)
 
-        # self._insert_alt(database, df)
-        self.insert(database, self.name, df)
+        # Start out by just inserting a single element to avoid big error messages
+        self.insert(database, self.name, df.iloc[0])
 
-    # def _insert_alt(self, database, df):
-    #     with database.connect() as conn:
-    #         conn = conn.execution_options(schema_translate_map={None: database.schema})
-    #         conn.execute(self._table.insert(), df.to_dict(orient="records"))
+        # Insert the rest of the data afterwards
+        self.insert(database, self.name, df.iloc[1:])
 
     @staticmethod
     def insert(database, name, df):

@@ -14,3 +14,4 @@ finally:
 from dbflow.flow.flow_spec import FlowSpec
 from dbflow.wrappers import *
 from dbflow.utils import load_all_flows
+import dbflow.schema as schema

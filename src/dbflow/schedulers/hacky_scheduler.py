@@ -4,7 +4,7 @@ from dbflow.configuration import Configuration
 from dbflow.graph.dag import DAG
 import matplotlib.pyplot as plt
 import argparse
-from dbflow import schedule_flow, load_all_flows
+from dbflow import load_all_flows
 
 from dbflow.schedulers.run import DependencyThreadPool
 
@@ -48,10 +48,8 @@ class HackyScheduler:
                 pool.submit(name, DAG.flows[name].hacky_run, dependencies)
 
     def serve(self):
-        self.configuration.schedule.do(self.run)
-        while True:
-            schedule_flow.run_pending()
-            time.sleep(1)
+        schedule = self.configuration.schedule.do(self.run)
+        schedule.wait()
 
     @staticmethod
     def plot_flows():
