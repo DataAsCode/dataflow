@@ -31,11 +31,8 @@ class TableSchema:
         # Change all NaN values to None in to store it properly in the database
         df = df.astype(object).where(pd.notnull(df), None)
 
-        # Start out by just inserting a single element to avoid big error messages
-        self.insert(database, self.name, df.iloc[0])
+        self.insert(database, self.name, df)
 
-        # Insert the rest of the data afterwards
-        self.insert(database, self.name, df.iloc[1:])
 
     @staticmethod
     def insert(database, name, df):
