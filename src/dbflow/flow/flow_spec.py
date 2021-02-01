@@ -29,5 +29,5 @@ class FlowSpec(MetaFlowSpec):
             '--no-pylint',
             'run',
         ]
-        result = subprocess.run(cmd, capture_output=True)
+        result = subprocess.run(cmd, capture_output=False)
         return result.returncode == 0

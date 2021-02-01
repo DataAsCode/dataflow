@@ -38,7 +38,7 @@ class StaticConfiguration:
                 else:
                     auth_info["file"] = None
             if key == "env":
-                for value in values:
+                for value in value  s:
                     if os.getenv(value):
                         auth_info[key] = os.getenv(value)
                         break
